@@ -21,7 +21,7 @@ public class UserService {
 
         List<UserEntity> list_of_All_Users =   userRepo.findAll();
         return list_of_All_Users.stream()
-                .map(user -> new UserDTO().builder()
+                .map(user -> UserDTO.builder()
                         .email(user.getEmail())
                         .username(user.getUsername())
                         .password(user.getPassword())
@@ -32,7 +32,7 @@ public class UserService {
     public UserDTO findUserDTO(Long Id) throws Exception{
         Optional<UserEntity> userFound = userRepo.findById(Id);
         if(userFound.isPresent()){
-            return new UserDTO().builder()
+            return UserDTO.builder()
                     .email(userFound.get().getEmail())
                     .username(userFound.get().getUsername())
                     .password(userFound.get().getPassword())
@@ -44,7 +44,7 @@ public class UserService {
     public UserDTO findUserDTO(String username, String password) throws Exception{
         Optional<UserEntity> userFound = userRepo.findByUsername(username);
         if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(password)){
-            return new UserDTO().builder()
+            return UserDTO.builder()
                     .email(userFound.get().getEmail())
                     .username(userFound.get().getUsername())
                     .password(userFound.get().getPassword())
@@ -69,7 +69,7 @@ public class UserService {
         throw new Exception("User Not Found");
     }
 
-    public UserDTO saveUserDTO(UserDTO user){
+    public String saveUserDTO(UserDTO user){
         UserEntity newUser = UserEntity.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
@@ -77,7 +77,7 @@ public class UserService {
                 .transactionList(new ArrayList<>())
                 .build();
         userRepo.save(newUser);
-        return user;
+        return "User Successfully Saved!";
     }
 
     public void deleteUserEntity(Long id){
