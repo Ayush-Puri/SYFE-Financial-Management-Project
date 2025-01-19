@@ -71,6 +71,13 @@ public class UserService {
         }
         else throw new Exception("User Not Found in database");
     }
+    public Optional<UserEntity> findUserEntitybyUsername(String username) throws Exception{
+        Optional<UserEntity> userFound = userRepo.findByUsername(username);
+        if(userFound.isPresent()){
+            return userFound;
+        }
+        else throw new Exception("User Not Found in database");
+    }
 
     public String saveUserDTO(UserDTO user){
         Set<String> category = new HashSet<>();

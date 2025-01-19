@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class TransactionService {
@@ -41,6 +43,13 @@ public class TransactionService {
 
         // Save transaction
         transactionRepository.save(transaction);
+
+        if(!user.get().getCategory().contains(transactionDTO.getCategory())){
+
+            Set<String> newCategoryList = user.get().getCategory();
+            newCategoryList.add(transactionDTO.getCategory());
+            user.get().setCategory(newCategoryList);
+        }
 
         // Update user's wallet
         double updatedWallet = (user.get().getWallet() == null ? 0.0 : user.get().getWallet()) + transactionDTO.getAmount();

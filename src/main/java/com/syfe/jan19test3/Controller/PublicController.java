@@ -31,7 +31,10 @@ public class PublicController {
     public String verifyUser(@RequestBody AuthDTO authDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        return userService.verifyUser(authDTO);
+        String Result_part1 = userService.verifyUser(authDTO);
+        String Result = username+Result_part1;
+
+        return Result;
     }
 
 
