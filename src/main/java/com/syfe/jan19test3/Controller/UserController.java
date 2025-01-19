@@ -1,6 +1,5 @@
 package com.syfe.jan19test3.Controller;
 
-import com.syfe.jan19test3.DTO.AuthDTO;
 import com.syfe.jan19test3.DTO.UserDTO;
 import com.syfe.jan19test3.Entity.UserEntity;
 import com.syfe.jan19test3.Service.UserService;
@@ -11,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -37,18 +35,18 @@ public class UserController {
     }
 
     @DeleteMapping("/user")
-    public String deleteUserEntity(HttpServletRequest request) throws Exception {
-
-        System.out.println(request.getParameter("username")+"    =======     "+ request.getParameter("password"));
-
-        return userService.deleteUserEntity(request.getParameter("username"), request.getParameter("password"));
+    public String deleteUserEntity() throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity currentUser = userService.findUserEntityByUsername(username).get();
+        return userService.deleteUserEntity(currentUser.getUsername());
     }
 
     @GetMapping("/MyCategories")
-    public Set<String> findAllCategoriesOfUser(HttpServletRequest request) throws Exception {
+    public Set<String> findAllCategoriesOfUser() throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        UserEntity currentUser = userService.findUserEntitybyUsername(username).get();
+        UserEntity currentUser = userService.findUserEntityByUsername(username).get();
 
         return currentUser.getCategory();
     }

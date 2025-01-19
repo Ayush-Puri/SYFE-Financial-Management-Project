@@ -2,6 +2,7 @@ package com.syfe.jan19test3.Service;
 
 
 import com.syfe.jan19test3.DTO.TransactionDTO;
+import com.syfe.jan19test3.DTO.TransactionType;
 import com.syfe.jan19test3.Entity.UserEntity;
 import com.syfe.jan19test3.Entity.userTransaction;
 import com.syfe.jan19test3.Repository.TransactionRepository;
@@ -36,6 +37,7 @@ public class TransactionService {
                 .user(user.get())
                 .amount(transactionDTO.getAmount())
                 .category(transactionDTO.getCategory())
+                .type(transactionDTO.getType())
                 .date(LocalDateTime.now())
                 .description(transactionDTO.getDescription())
                 .build();

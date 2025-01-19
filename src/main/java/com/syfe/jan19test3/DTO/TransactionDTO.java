@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class TransactionDTO {
 
     private Double amount;
+    private TransactionType type;
     private String category;
     private String description;
 }

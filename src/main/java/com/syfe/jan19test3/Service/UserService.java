@@ -4,15 +4,12 @@ import com.syfe.jan19test3.DTO.AuthDTO;
 import com.syfe.jan19test3.DTO.UserDTO;
 import com.syfe.jan19test3.Entity.UserEntity;
 import com.syfe.jan19test3.Repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,27 +48,8 @@ public class UserService {
         throw new Exception("User Not Found");
     }
 
-    public UserDTO findUserDTO(String username, String password) throws Exception{
-        Optional<UserEntity> userFound = userRepo.findByUsername(username);
-        if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(encoder.encode(password))){
-            return UserDTO.builder()
-                    .email(userFound.get().getEmail())
-                    .username(userFound.get().getUsername())
-                    .password(userFound.get().getPassword())
-                    .build();
-        }
-        throw new Exception("User Not Found");
-    }
 
-
-    public Optional<UserEntity> findUserEntity(String username, String password) throws Exception{
-        Optional<UserEntity> userFound = userRepo.findByUsername(username);
-        if(userFound.isPresent()){
-            return userFound;
-        }
-        else throw new Exception("User Not Found in database");
-    }
-    public Optional<UserEntity> findUserEntitybyUsername(String username) throws Exception{
+    public Optional<UserEntity> findUserEntityByUsername(String username) throws Exception{
         Optional<UserEntity> userFound = userRepo.findByUsername(username);
         if(userFound.isPresent()){
             return userFound;
@@ -97,9 +75,8 @@ public class UserService {
         return "User Successfully Saved!";
     }
 
-
-    public String deleteUserEntity(String username, String password) throws Exception {
-    Optional<UserEntity> toBeDeletedUser = findUserEntity(username, password);
+    public String deleteUserEntity(String username) throws Exception {
+    Optional<UserEntity> toBeDeletedUser = findUserEntityByUsername(username);
     if(toBeDeletedUser.isPresent()) {
         userRepo.deleteById(toBeDeletedUser.get().getUserid());
         return "Deletion Successful";

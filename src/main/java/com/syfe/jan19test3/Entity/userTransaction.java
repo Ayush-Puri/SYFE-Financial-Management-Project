@@ -1,5 +1,6 @@
 package com.syfe.jan19test3.Entity;
 
+import com.syfe.jan19test3.DTO.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,9 @@ public class userTransaction {
     private UserEntity user;
 
     private Double amount;
+
+    @Enumerated(value = EnumType.STRING)
+    private TransactionType type;
 
     private LocalDateTime date = LocalDateTime.now();
 

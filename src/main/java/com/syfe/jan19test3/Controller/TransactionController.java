@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/transaction")
@@ -36,7 +35,7 @@ public class TransactionController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        Long userId = userService.findUserEntitybyUsername(username).get().getUserid();
+        Long userId = userService.findUserEntityByUsername(username).get().getUserid();
 
         return transactionService.findAllTransactionsByUser(userId);
     }
@@ -45,7 +44,7 @@ public class TransactionController {
     public List<userTransaction> findAllCategoriesOfUser(HttpServletRequest request) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        UserEntity currentUser = userService.findUserEntitybyUsername(username).get();
+        UserEntity currentUser = userService.findUserEntityByUsername(username).get();
 
         return currentUser.getTransactionList();
     }
