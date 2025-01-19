@@ -15,4 +15,5 @@ public class TransactionDTO {
     private String password;
     private Double amount;
     private String category;
+    private String decsription;
 }

@@ -6,9 +6,7 @@ import com.syfe.jan19test3.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,27 +59,41 @@ public class UserService {
         throw new Exception("User Not Found");
     }
 
-    public UserEntity findUserEntity(String username, String password) throws Exception{
+    public Optional<UserEntity> findUserEntity(String username, String password) throws Exception{
         Optional<UserEntity> userFound = userRepo.findByUsername(username);
         if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(password)){
-            return userFound.get();
+            return userFound;
         }
-        throw new Exception("User Not Found");
+        else if(userFound.isPresent() && !userFound.get().getPassword().equalsIgnoreCase(password)){
+            throw new Exception("User Found but Password Incorrect");
+        }
+        else throw new Exception("User Not Found in database");
     }
 
     public String saveUserDTO(UserDTO user){
+
+        Set<String> category = new HashSet<>();
+        category.add("food");
+        category.add("rent");
+        category.add("entertainment");
+
         UserEntity newUser = UserEntity.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .email(user.getEmail())
+                .category(category)
                 .transactionList(new ArrayList<>())
                 .build();
         userRepo.save(newUser);
         return "User Successfully Saved!";
     }
 
-    public void deleteUserEntity(Long id){
-        userRepo.deleteById(id);
+    public String deleteUserEntity(String username, String password) throws Exception {
+    Optional<UserEntity> deletedUser = findUserEntity(username, password);
+    if(deletedUser.isPresent()) {
+        userRepo.deleteById(deletedUser.get().getUserid());
+        return "Deletion Successful";
+    }else return "Deletion Insuccessful";
     }
 
     public List<UserEntity> findAllUserEntity(){

@@ -29,4 +29,6 @@ public class userTransaction {
     private LocalDateTime date = LocalDateTime.now();
 
     private String category;
+
+    private String description;
 }

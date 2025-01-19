@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -32,10 +33,13 @@ public class UserController {
     }
 
     @GetMapping("/findme")
-    public UserEntity findByUsername(@RequestBody AuthDTO authDTO) throws Exception {
+    public Optional<UserEntity> findByUsername(@RequestBody AuthDTO authDTO) throws Exception {
         return userService.findUserEntity(authDTO.getUsername(), authDTO.getPassword());
     }
 
-
+    @DeleteMapping("/user")
+    public String deleteUserEntity(@RequestBody AuthDTO authDTO) throws Exception {
+        return userService.deleteUserEntity(authDTO.getPassword(), authDTO.getPassword());
+    }
 
 }
