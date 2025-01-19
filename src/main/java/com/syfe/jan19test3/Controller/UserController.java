@@ -4,6 +4,7 @@ import com.syfe.jan19test3.DTO.AuthDTO;
 import com.syfe.jan19test3.DTO.UserDTO;
 import com.syfe.jan19test3.Entity.UserEntity;
 import com.syfe.jan19test3.Service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,14 +33,9 @@ public class UserController {
         return userService.findAllUserEntity();
     }
 
-    @GetMapping("/findme")
-    public Optional<UserEntity> findByUsername(@RequestBody AuthDTO authDTO) throws Exception {
-        return userService.findUserEntity(authDTO.getUsername(), authDTO.getPassword());
-    }
-
     @DeleteMapping("/user")
-    public String deleteUserEntity(@RequestBody AuthDTO authDTO) throws Exception {
-        return userService.deleteUserEntity(authDTO.getPassword(), authDTO.getPassword());
+    public String deleteUserEntity(HttpServletRequest request) throws Exception {
+        return userService.deleteUserEntity(request.getParameter("username"), request.getParameter("passwod"));
     }
 
 }

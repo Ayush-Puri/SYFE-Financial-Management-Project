@@ -4,6 +4,7 @@ import com.syfe.jan19test3.DTO.UserDTO;
 import com.syfe.jan19test3.Entity.UserEntity;
 import com.syfe.jan19test3.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,6 +13,8 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
+
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
     @Autowired
     private UserRepository userRepo;
 
@@ -41,7 +44,7 @@ public class UserService {
 
     public UserDTO findUserDTO(String username, String password) throws Exception{
         Optional<UserEntity> userFound = userRepo.findByUsername(username);
-        if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(password)){
+        if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(encoder.encode(password))){
             return UserDTO.builder()
                     .email(userFound.get().getEmail())
                     .username(userFound.get().getUsername())
@@ -53,7 +56,7 @@ public class UserService {
 
     public Long findUserID(String username, String password) throws Exception{
         Optional<UserEntity> userFound = userRepo.findByUsername(username);
-        if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(password)){
+        if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(encoder.encode(password))){
             return userFound.get().getUserid();
         }
         throw new Exception("User Not Found");
@@ -61,7 +64,7 @@ public class UserService {
 
     public Optional<UserEntity> findUserEntity(String username, String password) throws Exception{
         Optional<UserEntity> userFound = userRepo.findByUsername(username);
-        if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(password)){
+        if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(encoder.encode(password))){
             return userFound;
         }
         else if(userFound.isPresent() && !userFound.get().getPassword().equalsIgnoreCase(password)){
@@ -79,7 +82,7 @@ public class UserService {
 
         UserEntity newUser = UserEntity.builder()
                 .username(user.getUsername())
-                .password(user.getPassword())
+                .password(encoder.encode(user.getPassword()))
                 .email(user.getEmail())
                 .category(category)
                 .transactionList(new ArrayList<>())
