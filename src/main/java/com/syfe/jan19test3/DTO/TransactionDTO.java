@@ -11,9 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionDTO {
-    private String username;
-    private String password;
+
     private Double amount;
     private String category;
-    private String decsription;
+    private String description;
 }

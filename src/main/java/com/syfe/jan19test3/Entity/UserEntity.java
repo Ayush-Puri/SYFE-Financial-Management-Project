@@ -7,10 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 @Entity
 @Data
@@ -37,9 +35,9 @@ public class UserEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> category = new HashSet<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Map<LocalDate, SavingGoal> savinggoals = new HashMap<>();
+
     @OneToMany
     private List<userTransaction> transactionList;
-
-    @ElementCollection
-    private List<SavingGoal> goals = new ArrayList<>();
 }

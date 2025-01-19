@@ -26,8 +26,21 @@ public class TransactionController {
 
     @PostMapping("/commit")
     public String commitTransaction(@RequestBody TransactionDTO transactionDTO) throws Exception {
-        return transactionService.saveTransaction(transactionDTO);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return transactionService.saveTransaction(transactionDTO, username);
     }
+
+    @GetMapping("/viewAllM2")
+    public List<userTransaction> findAllTransactionsByUser() throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Long userId = userService.findUserEntitybyUsername(username).get().getUserid();
+
+        return transactionService.findAllTransactionsByUser(userId);
+    }
+
     @GetMapping("/viewAll")
     public List<userTransaction> findAllCategoriesOfUser(HttpServletRequest request) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

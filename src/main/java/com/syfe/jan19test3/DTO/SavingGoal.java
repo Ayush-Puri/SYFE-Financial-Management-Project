@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Embeddable
@@ -15,5 +17,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SavingGoal {
     private Double targetamount;
-    private LocalDateTime date;
+    private LocalDate targetdate;
+    private Boolean iscompleted;
+    private LocalDate creationdate = LocalDate.now();
+    private Duration daysremaining = Duration.between(targetdate, LocalDate.now());
+
 }

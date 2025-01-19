@@ -6,13 +6,12 @@ import com.syfe.jan19test3.Entity.UserEntity;
 import com.syfe.jan19test3.Entity.userTransaction;
 import com.syfe.jan19test3.Repository.TransactionRepository;
 import com.syfe.jan19test3.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TransactionService {
@@ -26,19 +25,19 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    public String saveTransaction(TransactionDTO transactionDTO) throws Exception {
+    public String saveTransaction(TransactionDTO transactionDTO, String username) throws Exception {
         // Fetch user by ID
-        Optional<UserEntity> user = userRepository.findByUsername(transactionDTO.getUsername());
+        Optional<UserEntity> user = userRepository.findByUsername(username);
         if (user.isEmpty()) {
             return "User not found.";
         }
-
         // Create new transaction
         userTransaction transaction = userTransaction.builder()
                 .user(user.get())
                 .amount(transactionDTO.getAmount())
                 .category(transactionDTO.getCategory())
                 .date(LocalDateTime.now())
+                .description(transactionDTO.getDescription())
                 .build();
 
         // Save transaction
@@ -56,7 +55,10 @@ public class TransactionService {
         user.get().setWallet(updatedWallet);
 
         return "Transaction saved successfully.";
+    }
 
+    public List<userTransaction> findAllTransactionsByUser(Long userId){
+        return transactionRepository.findAllById(List.of(userId));
     }
 
 }

@@ -90,6 +90,7 @@ public class UserService {
                 .password(encoder.encode(user.getPassword()))
                 .email(user.getEmail())
                 .category(category)
+                .savinggoals(new HashMap<>())
                 .transactionList(new ArrayList<>())
                 .build();
         userRepo.save(newUser);
