@@ -33,7 +33,8 @@ public class SecurityConfig {
      return    http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> {
-                    request.requestMatchers("/transaction/","/api/").authenticated();
+                    request.requestMatchers("/api/**").authenticated();
+                    request.requestMatchers("/transaction/**").authenticated();
                     request.anyRequest().permitAll();})
                 .httpBasic(Customizer.withDefaults())
                 .build();
@@ -52,10 +53,8 @@ public class SecurityConfig {
         return provider;
     }
 
+    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-
-
 }

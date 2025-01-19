@@ -1,5 +1,6 @@
 package com.syfe.jan19test3.Controller;
 
+import com.syfe.jan19test3.DTO.AuthDTO;
 import com.syfe.jan19test3.DTO.UserDTO;
 import com.syfe.jan19test3.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,11 @@ public class PublicController {
     public UserDTO saveUser(@RequestBody UserDTO userDto){
         userService.saveUserDTO(userDto);
         return userDto;
+    }
+
+    @PostMapping("/verify")
+    public String verifyUser(@RequestBody AuthDTO authDTO){
+        return userService.verifyUser(authDTO);
     }
 
 

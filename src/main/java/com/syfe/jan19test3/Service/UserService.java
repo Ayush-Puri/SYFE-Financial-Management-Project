@@ -1,10 +1,15 @@
 package com.syfe.jan19test3.Service;
 
+import com.syfe.jan19test3.DTO.AuthDTO;
 import com.syfe.jan19test3.DTO.UserDTO;
 import com.syfe.jan19test3.Entity.UserEntity;
 import com.syfe.jan19test3.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -13,8 +18,10 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
+    @Autowired
+    private AuthenticationManager authManager;
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
     @Autowired
     private UserRepository userRepo;
 
@@ -54,13 +61,6 @@ public class UserService {
         throw new Exception("User Not Found");
     }
 
-    public Long findUserID(String username, String password) throws Exception{
-        Optional<UserEntity> userFound = userRepo.findByUsername(username);
-        if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(encoder.encode(password))){
-            return userFound.get().getUserid();
-        }
-        throw new Exception("User Not Found");
-    }
 
     public Optional<UserEntity> findUserEntity(String username, String password) throws Exception{
         Optional<UserEntity> userFound = userRepo.findByUsername(username);
@@ -101,6 +101,17 @@ public class UserService {
 
     public List<UserEntity> findAllUserEntity(){
         return userRepo.findAll();
+    }
+
+    public String verifyUser(AuthDTO authDTO){
+        Authentication authentication = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        authDTO.getUsername(), authDTO.getPassword()));
+
+        if(authentication.isAuthenticated())
+            return "Authenicated";
+
+        return "Authentication Failed";
     }
 
 }
