@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class TransactionService {
@@ -25,14 +26,14 @@ public class TransactionService {
 
     public String saveTransaction(TransactionDTO transactionDTO) throws Exception {
         // Fetch user by ID
-        UserEntity user = userRepository.findByUsername(transactionDTO.getUsername()).orElse(null);
-        if (user == null) {
+        Optional<UserEntity> user = userRepository.findByUsername(transactionDTO.getUsername());
+        if (user.isEmpty()) {
             return "User not found.";
         }
 
         // Create new transaction
         userTransaction transaction = userTransaction.builder()
-                .user(user)
+                .user(user.get())
                 .amount(transactionDTO.getAmount())
                 .category(transactionDTO.getCategory())
                 .date(LocalDateTime.now())
@@ -42,9 +43,8 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         // Update user's wallet
-        double updatedWallet = (user.getWallet() == null ? 0.0 : user.getWallet()) + transactionDTO.getAmount();
-        user.setWallet(updatedWallet);
-        userRepository.save(user);
+        double updatedWallet = (user.get().getWallet() == null ? 0.0 : user.get().getWallet()) + transactionDTO.getAmount();
+        user.get().setWallet(updatedWallet);
 
         return "Transaction saved successfully.";
 

@@ -4,6 +4,7 @@ import com.syfe.jan19test3.DTO.AuthDTO;
 import com.syfe.jan19test3.DTO.UserDTO;
 import com.syfe.jan19test3.Entity.UserEntity;
 import com.syfe.jan19test3.Repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,7 +23,7 @@ public class UserService {
     @Autowired
     private AuthenticationManager authManager;
 
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
     @Autowired
     private UserRepository userRepo;
 
@@ -64,17 +66,13 @@ public class UserService {
 
     public Optional<UserEntity> findUserEntity(String username, String password) throws Exception{
         Optional<UserEntity> userFound = userRepo.findByUsername(username);
-        if(userFound.isPresent() && userFound.get().getPassword().equalsIgnoreCase(encoder.encode(password))){
+        if(userFound.isPresent()){
             return userFound;
-        }
-        else if(userFound.isPresent() && !userFound.get().getPassword().equalsIgnoreCase(password)){
-            throw new Exception("User Found but Password Incorrect");
         }
         else throw new Exception("User Not Found in database");
     }
 
     public String saveUserDTO(UserDTO user){
-
         Set<String> category = new HashSet<>();
         category.add("food");
         category.add("rent");
@@ -91,10 +89,11 @@ public class UserService {
         return "User Successfully Saved!";
     }
 
+
     public String deleteUserEntity(String username, String password) throws Exception {
-    Optional<UserEntity> deletedUser = findUserEntity(username, password);
-    if(deletedUser.isPresent()) {
-        userRepo.deleteById(deletedUser.get().getUserid());
+    Optional<UserEntity> toBeDeletedUser = findUserEntity(username, password);
+    if(toBeDeletedUser.isPresent()) {
+        userRepo.deleteById(toBeDeletedUser.get().getUserid());
         return "Deletion Successful";
     }else return "Deletion Insuccessful";
     }
@@ -112,6 +111,18 @@ public class UserService {
             return "Authenicated";
 
         return "Authentication Failed";
+    }
+
+    public boolean isUserPresentinDatabase(Long userId){
+        return userRepo.findById(userId).isPresent();
+    }
+
+    public String deleteUserEntitybyID(Long userId){
+        if(isUserPresentinDatabase(userId)){
+            userRepo.deleteById(userId);
+            return "Deletion Successful";
+        }
+        return "Deletion Unsuccessful";
     }
 
 }

@@ -35,7 +35,10 @@ public class UserController {
 
     @DeleteMapping("/user")
     public String deleteUserEntity(HttpServletRequest request) throws Exception {
-        return userService.deleteUserEntity(request.getParameter("username"), request.getParameter("passwod"));
+
+        System.out.println(request.getParameter("username")+"    =======     "+ request.getParameter("password"));
+
+        return userService.deleteUserEntity(request.getParameter("username"), request.getParameter("password"));
     }
 
 }
