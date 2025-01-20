@@ -32,12 +32,7 @@ public class TransactionController {
 
     @GetMapping("/viewAllM2")
     public List<userTransaction> findAllTransactionsByUser() throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        Long userId = userService.findUserEntityByUsername(username).get().getUserid();
-
-        return transactionService.findAllTransactionsByUser(userId);
+        return transactionService.findAllTransactionsByUser();
     }
 
     @GetMapping("/viewAll")

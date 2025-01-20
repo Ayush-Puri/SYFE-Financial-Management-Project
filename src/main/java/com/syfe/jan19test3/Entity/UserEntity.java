@@ -1,13 +1,11 @@
 package com.syfe.jan19test3.Entity;
 
-import com.syfe.jan19test3.DTO.SavingGoal;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Entity
@@ -35,9 +33,9 @@ public class UserEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> category = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Map<LocalDate, SavingGoal> savinggoals = new HashMap<>();
-
     @OneToMany
+    private Set<SavingGoal> savinggoals = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<userTransaction> transactionList;
 }

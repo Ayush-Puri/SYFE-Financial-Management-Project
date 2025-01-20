@@ -9,6 +9,8 @@ import com.syfe.jan19test3.Repository.TransactionRepository;
 import com.syfe.jan19test3.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,6 +37,7 @@ public class TransactionService {
         // Create new transaction
         userTransaction transaction = userTransaction.builder()
                 .user(user.get())
+                .username(username)
                 .amount(transactionDTO.getAmount())
                 .category(transactionDTO.getCategory())
                 .type(transactionDTO.getType())
@@ -45,6 +48,10 @@ public class TransactionService {
         // Save transaction
         transactionRepository.save(transaction);
 
+        // Update user's wallet
+        double updatedWallet = (user.get().getWallet() == null ? 0.0 : user.get().getWallet()) + transactionDTO.getAmount();
+        user.get().setWallet(updatedWallet);
+
         if(!user.get().getCategory().contains(transactionDTO.getCategory())){
 
             Set<String> newCategoryList = user.get().getCategory();
@@ -52,15 +59,16 @@ public class TransactionService {
             user.get().setCategory(newCategoryList);
         }
 
-        // Update user's wallet
-        double updatedWallet = (user.get().getWallet() == null ? 0.0 : user.get().getWallet()) + transactionDTO.getAmount();
-        user.get().setWallet(updatedWallet);
+        userRepository.save(user.get());
 
         return "Transaction saved successfully.";
     }
 
-    public List<userTransaction> findAllTransactionsByUser(Long userId){
-        return transactionRepository.findAllById(List.of(userId));
+    public List<userTransaction> findAllTransactionsByUser() throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        return transactionRepository.findAllByUsername(username);
     }
 
 }

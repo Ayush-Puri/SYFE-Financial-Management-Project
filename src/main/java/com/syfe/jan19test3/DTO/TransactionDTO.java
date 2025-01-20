@@ -16,4 +16,5 @@ public class TransactionDTO {
     private TransactionType type;
     private String category;
     private String description;
+
 }
