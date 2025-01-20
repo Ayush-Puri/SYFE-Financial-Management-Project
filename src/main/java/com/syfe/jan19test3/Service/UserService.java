@@ -1,16 +1,22 @@
 package com.syfe.jan19test3.Service;
 
 import com.syfe.jan19test3.DTO.AuthDTO;
+import com.syfe.jan19test3.DTO.SavingGoal_ReturnDTO;
 import com.syfe.jan19test3.DTO.UserDTO;
+import com.syfe.jan19test3.DTO.UserReadDTO;
 import com.syfe.jan19test3.Entity.UserEntity;
+import com.syfe.jan19test3.Entity.userTransaction;
 import com.syfe.jan19test3.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,35 +28,38 @@ public class UserService {
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
     @Autowired
-    private UserRepository userRepo;
+    private UserRepository userRepository;
 
-    public List<UserDTO> findAllUserDTO(){
+    public List<UserReadDTO> findAll(){
 
-        List<UserEntity> list_of_All_Users =   userRepo.findAll();
+        List<UserEntity> list_of_All_Users =   userRepository.findAll();
         return list_of_All_Users.stream()
-                .map(user -> UserDTO.builder()
-                        .email(user.getEmail())
-                        .username(user.getUsername())
-                        .password(user.getPassword())
+                .map(userFound -> UserReadDTO.builder()
+                        .username(userFound.getUsername())
+                        .category(userFound.getCategory())
+                        .wallet(userFound.getWallet())
+                        .email(userFound.getEmail())
                         .build())
                 .collect(Collectors.toList());
     }
 
-    public UserDTO findUserDTO(Long Id) throws Exception{
-        Optional<UserEntity> userFound = userRepo.findById(Id);
-        if(userFound.isPresent()){
-            return UserDTO.builder()
-                    .email(userFound.get().getEmail())
-                    .username(userFound.get().getUsername())
-                    .password(userFound.get().getPassword())
+    public UserReadDTO findUser() throws Exception{
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity userFound = findUserEntityByUsername(username).get();
+
+            return UserReadDTO.builder()
+                    .username(userFound.getUsername())
+                    .email(userFound.getEmail())
+                    .category(userFound.getCategory())
+                    .wallet(userFound.getWallet())
                     .build();
-        }
-        throw new Exception("User Not Found");
     }
 
 
     public Optional<UserEntity> findUserEntityByUsername(String username) throws Exception{
-        Optional<UserEntity> userFound = userRepo.findByUsername(username);
+        Optional<UserEntity> userFound = userRepository.findByUsername(username);
         if(userFound.isPresent()){
             return userFound;
         }
@@ -68,23 +77,30 @@ public class UserService {
                 .password(encoder.encode(user.getPassword()))
                 .email(user.getEmail())
                 .category(category)
-                .savinggoals(new HashMap<>())
+                .savinggoals(new HashSet<>())
                 .transactionList(new ArrayList<>())
                 .build();
-        userRepo.save(newUser);
+        userRepository.save(newUser);
         return "User Successfully Saved!";
     }
 
     public String deleteUserEntity(String username) throws Exception {
     Optional<UserEntity> toBeDeletedUser = findUserEntityByUsername(username);
     if(toBeDeletedUser.isPresent()) {
-        userRepo.deleteById(toBeDeletedUser.get().getUserid());
+        userRepository.delete(toBeDeletedUser.get());
         return "Deletion Successful";
     }else return "Deletion Insuccessful";
     }
 
-    public List<UserEntity> findAllUserEntity(){
-        return userRepo.findAll();
+    public List<UserReadDTO> findAllUserEntity(){
+        return userRepository.findAll().stream().map(
+                user -> UserReadDTO.builder()
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .category(user.getCategory())
+                        .wallet(user.getWallet())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public String verifyUser(AuthDTO authDTO){
@@ -94,20 +110,38 @@ public class UserService {
 
         if(authentication.isAuthenticated())
             return "Authenicated";
-
         return "Authentication Failed";
     }
 
     public boolean isUserPresentinDatabase(Long userId){
-        return userRepo.findById(userId).isPresent();
+        return userRepository.findById(userId).isPresent();
     }
 
     public String deleteUserEntitybyID(Long userId){
         if(isUserPresentinDatabase(userId)){
-            userRepo.deleteById(userId);
+            userRepository.deleteById(userId);
             return "Deletion Successful";
         }
         return "Deletion Unsuccessful";
     }
 
+
+    public UserReadDTO updateUser(UserDTO user) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity currentUser = findUserEntityByUsername(username).get();
+
+        currentUser.setEmail(user.getEmail());
+        currentUser.setPassword(user.getPassword());
+        currentUser.setUsername(user.getUsername());
+
+        userRepository.save(currentUser);
+
+        return new UserReadDTO().builder()
+                .username(currentUser.getUsername())
+                .email(currentUser.getEmail())
+                .wallet(currentUser.getWallet())
+                .category(currentUser.getCategory())
+                .build();
+    }
 }

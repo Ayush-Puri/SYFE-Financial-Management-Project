@@ -1,5 +1,6 @@
 package com.syfe.jan19test3.Controller;
 
+import com.syfe.jan19test3.DTO.TransactionReturnDTO;
 import com.syfe.jan19test3.Entity.userTransaction;
 import com.syfe.jan19test3.DTO.TransactionDTO;
 import com.syfe.jan19test3.Entity.UserEntity;
@@ -30,22 +31,14 @@ public class TransactionController {
         return transactionService.saveTransaction(transactionDTO, username);
     }
 
-    @GetMapping("/viewAllM2")
-    public List<userTransaction> findAllTransactionsByUser() throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        Long userId = userService.findUserEntityByUsername(username).get().getUserid();
-
-        return transactionService.findAllTransactionsByUser(userId);
-    }
-
     @GetMapping("/viewAll")
-    public List<userTransaction> findAllCategoriesOfUser(HttpServletRequest request) throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserEntity currentUser = userService.findUserEntityByUsername(username).get();
-
-        return currentUser.getTransactionList();
+    public List<TransactionReturnDTO> findAllTransactionsByUser() throws Exception {
+        return transactionService.findAllTransactionsByUser();
     }
+
+    @PutMapping("/commit/{transactionId}")
+    public TransactionReturnDTO updateTreansaction(@RequestBody TransactionDTO transactionDTO, @PathVariable Integer transactionId) throws Exception {
+        return transactionService.updateTransaction(transactionDTO, transactionId);
+    }
+
 }

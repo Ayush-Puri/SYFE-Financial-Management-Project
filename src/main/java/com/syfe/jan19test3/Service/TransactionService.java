@@ -2,6 +2,7 @@ package com.syfe.jan19test3.Service;
 
 
 import com.syfe.jan19test3.DTO.TransactionDTO;
+import com.syfe.jan19test3.DTO.TransactionReturnDTO;
 import com.syfe.jan19test3.DTO.TransactionType;
 import com.syfe.jan19test3.Entity.UserEntity;
 import com.syfe.jan19test3.Entity.userTransaction;
@@ -9,10 +10,13 @@ import com.syfe.jan19test3.Repository.TransactionRepository;
 import com.syfe.jan19test3.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -35,6 +39,7 @@ public class TransactionService {
         // Create new transaction
         userTransaction transaction = userTransaction.builder()
                 .user(user.get())
+                .username(username)
                 .amount(transactionDTO.getAmount())
                 .category(transactionDTO.getCategory())
                 .type(transactionDTO.getType())
@@ -45,6 +50,10 @@ public class TransactionService {
         // Save transaction
         transactionRepository.save(transaction);
 
+        // Update user's wallet
+        double updatedWallet = (user.get().getWallet() == null ? 0.0 : user.get().getWallet()) + transactionDTO.getAmount();
+        user.get().setWallet(updatedWallet);
+
         if(!user.get().getCategory().contains(transactionDTO.getCategory())){
 
             Set<String> newCategoryList = user.get().getCategory();
@@ -52,15 +61,64 @@ public class TransactionService {
             user.get().setCategory(newCategoryList);
         }
 
-        // Update user's wallet
-        double updatedWallet = (user.get().getWallet() == null ? 0.0 : user.get().getWallet()) + transactionDTO.getAmount();
-        user.get().setWallet(updatedWallet);
+        userRepository.save(user.get());
 
         return "Transaction saved successfully.";
     }
 
-    public List<userTransaction> findAllTransactionsByUser(Long userId){
-        return transactionRepository.findAllById(List.of(userId));
+    public List<TransactionReturnDTO> findAllTransactionsByUser() throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        return transactionRepository.findAllByUsername(username).stream()
+                .map(transaction -> new TransactionReturnDTO().builder()
+                        .amount(transaction.getAmount())
+                        .created_date(transaction.getDate())
+                        .transactionid(transaction.getTransactionid())
+                        .type(transaction.getType())
+                        .username(transaction.getUsername())
+                        .category(transaction.getCategory())
+                        .description(transaction.getDescription())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public TransactionReturnDTO updateTransaction(TransactionDTO transactionDTO, Integer id) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity currentUser = userService.findUserEntityByUsername(username).get();
+
+        Optional<userTransaction> transaction = transactionRepository.findByTransactionid(id);
+        if(transaction.isEmpty()) throw new Exception("Transaction Not Found");
+        if(!transaction.get().getUsername().equals(currentUser.getUsername()))
+            throw new Exception("Transaction is not Your to edit");
+
+        Double previousAmt = transaction.get().getAmount();
+
+        transaction.get().setAmount(transactionDTO.getAmount());
+        transaction.get().setCategory(transactionDTO.getCategory());
+        transaction.get().setDescription(transactionDTO.getDescription());
+        transaction.get().setType(transactionDTO.getType());
+
+        if(!currentUser.getCategory().contains(transactionDTO.getCategory())){
+            Set<String> newCategoryList = currentUser.getCategory();
+            newCategoryList.add(transactionDTO.getCategory());
+            currentUser.setCategory(newCategoryList);
+        }
+
+        currentUser.setWallet(currentUser.getWallet()+ transactionDTO.getAmount()-previousAmt);
+        userRepository.save(currentUser);
+        transactionRepository.save(transaction.get());
+
+        return new TransactionReturnDTO().builder()
+                .transactionid(transaction.get().getTransactionid())
+                .amount(transactionDTO.getAmount())
+                .type(transactionDTO.getType())
+                .category(transactionDTO.getCategory())
+                .username(currentUser.getUsername())
+                .description(transactionDTO.getDescription())
+                .created_date(transaction.get().getDate())
+                .build();
     }
 
 }

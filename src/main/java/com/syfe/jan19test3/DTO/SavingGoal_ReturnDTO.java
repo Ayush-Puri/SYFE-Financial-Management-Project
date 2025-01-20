@@ -1,26 +1,27 @@
 package com.syfe.jan19test3.DTO;
 
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
 
-@Embeddable
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SavingGoal {
+public class SavingGoal_ReturnDTO {
+
+    private String username;
+    private Integer savinggoalid;
     private Double targetamount;
     private LocalDate targetdate;
     private Boolean iscompleted;
-    private LocalDate creationdate = LocalDate.now();
-    private Period daysremaining = Period.between(targetdate, LocalDate.now());
+    private LocalDate creationdate;
+    private Period daysremaining;
+    private Double amountdifference;
 
 }
