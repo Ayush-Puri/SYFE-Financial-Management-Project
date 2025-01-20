@@ -2,6 +2,7 @@ package com.syfe.jan19test3.Service;
 
 
 import com.syfe.jan19test3.DTO.TransactionDTO;
+import com.syfe.jan19test3.DTO.TransactionReturnDTO;
 import com.syfe.jan19test3.DTO.TransactionType;
 import com.syfe.jan19test3.Entity.UserEntity;
 import com.syfe.jan19test3.Entity.userTransaction;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -64,11 +66,21 @@ public class TransactionService {
         return "Transaction saved successfully.";
     }
 
-    public List<userTransaction> findAllTransactionsByUser() throws Exception {
+    public List<TransactionReturnDTO> findAllTransactionsByUser() throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        return transactionRepository.findAllByUsername(username);
+        return transactionRepository.findAllByUsername(username).stream()
+                .map(transaction -> new TransactionReturnDTO().builder()
+                        .amount(transaction.getAmount())
+                        .created_date(transaction.getDate())
+                        .transactionid(transaction.getTransactionid())
+                        .type(transaction.getType())
+                        .username(transaction.getUsername())
+                        .category(transaction.getCategory())
+                        .description(transaction.getDescription())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }
