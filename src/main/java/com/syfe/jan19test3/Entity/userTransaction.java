@@ -21,11 +21,13 @@ public class userTransaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long transactionid;
 
+    private Double amount;
+
     @ManyToOne
     @JoinColumn
     private UserEntity user;
 
-    private Double amount;
+    private String username;
 
     @Enumerated(value = EnumType.STRING)
     private TransactionType type;
