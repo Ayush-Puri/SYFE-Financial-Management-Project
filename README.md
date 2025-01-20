@@ -1,7 +1,7 @@
 
 ---
 
-#  Personal Finance Manager System  
+#  SYFE - Personal Finance Manager System  
 
 ## 📝 Overview  
 The **Personal Finance Manager** is a powerful tool designed to help users track their income, expenses, and savings goals while gaining better control over their finances. Built with **Spring Boot** and equipped with robust authentication via **Spring Security**, this application offers a secure, user-friendly experience.  
