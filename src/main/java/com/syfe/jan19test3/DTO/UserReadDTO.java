@@ -16,8 +16,7 @@ import java.util.*;
 @NoArgsConstructor
 public class UserReadDTO {
     private String username;
+    private String email;
     private Double wallet;
     private Set<String> category = new HashSet<>();
-    private Set<SavingGoal_ReturnDTO> savinggoals = new HashSet<>();
-    private List<userTransaction> transactionList;
 }

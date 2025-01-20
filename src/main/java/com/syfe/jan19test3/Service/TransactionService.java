@@ -83,4 +83,42 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
+    public TransactionReturnDTO updateTransaction(TransactionDTO transactionDTO, Integer id) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity currentUser = userService.findUserEntityByUsername(username).get();
+
+        Optional<userTransaction> transaction = transactionRepository.findByTransactionid(id);
+        if(transaction.isEmpty()) throw new Exception("Transaction Not Found");
+        if(!transaction.get().getUsername().equals(currentUser.getUsername()))
+            throw new Exception("Transaction is not Your to edit");
+
+        Double previousAmt = transaction.get().getAmount();
+
+        transaction.get().setAmount(transactionDTO.getAmount());
+        transaction.get().setCategory(transactionDTO.getCategory());
+        transaction.get().setDescription(transactionDTO.getDescription());
+        transaction.get().setType(transactionDTO.getType());
+
+        if(!currentUser.getCategory().contains(transactionDTO.getCategory())){
+            Set<String> newCategoryList = currentUser.getCategory();
+            newCategoryList.add(transactionDTO.getCategory());
+            currentUser.setCategory(newCategoryList);
+        }
+
+        currentUser.setWallet(currentUser.getWallet()+ transactionDTO.getAmount()-previousAmt);
+        userRepository.save(currentUser);
+        transactionRepository.save(transaction.get());
+
+        return new TransactionReturnDTO().builder()
+                .transactionid(transaction.get().getTransactionid())
+                .amount(transactionDTO.getAmount())
+                .type(transactionDTO.getType())
+                .category(transactionDTO.getCategory())
+                .username(currentUser.getUsername())
+                .description(transactionDTO.getDescription())
+                .created_date(transaction.get().getDate())
+                .build();
+    }
+
 }

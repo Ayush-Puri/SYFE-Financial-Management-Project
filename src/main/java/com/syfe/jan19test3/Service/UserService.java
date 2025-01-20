@@ -30,32 +30,20 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<UserReadDTO> findAllUserDTO(){
+    public List<UserReadDTO> findAll(){
 
         List<UserEntity> list_of_All_Users =   userRepository.findAll();
         return list_of_All_Users.stream()
                 .map(userFound -> UserReadDTO.builder()
                         .username(userFound.getUsername())
                         .category(userFound.getCategory())
-                        .transactionList(userFound.getTransactionList())
-                        .savinggoals(userFound.getSavinggoals().stream()
-                                .map(
-                                        goal -> new SavingGoal_ReturnDTO().builder()
-                                                .amountdifference(goal.getTargetamount()-userFound.getWallet())
-                                                .targetdate(goal.getTargetdate())
-                                                .creationdate(goal.getCreationdate())
-                                                .daysremaining(Period.between(LocalDate.now(), goal.getTargetdate()))
-                                                .iscompleted(goal.getTargetamount()-userFound.getWallet() > 0 ? true : false)
-                                                .username(goal.getUsername())
-                                                .build())
-                                .collect(Collectors.toSet())
-                        )
                         .wallet(userFound.getWallet())
+                        .email(userFound.getEmail())
                         .build())
                 .collect(Collectors.toList());
     }
 
-    public UserReadDTO findUserDTO() throws Exception{
+    public UserReadDTO findUser() throws Exception{
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -63,20 +51,8 @@ public class UserService {
 
             return UserReadDTO.builder()
                     .username(userFound.getUsername())
+                    .email(userFound.getEmail())
                     .category(userFound.getCategory())
-                    .transactionList(userFound.getTransactionList())
-                    .savinggoals(userFound.getSavinggoals().stream()
-                            .map(
-                                    goal -> new SavingGoal_ReturnDTO().builder()
-                                            .amountdifference(goal.getTargetamount()-userFound.getWallet())
-                                            .targetdate(goal.getTargetdate())
-                                            .creationdate(goal.getCreationdate())
-                                            .daysremaining(Period.between(LocalDate.now(), goal.getTargetdate()))
-                                            .iscompleted(goal.getTargetamount()-userFound.getWallet() > 0 ? true : false)
-                                            .username(goal.getUsername())
-                                            .build())
-                                    .collect(Collectors.toSet())
-                            )
                     .wallet(userFound.getWallet())
                     .build();
     }
@@ -116,8 +92,15 @@ public class UserService {
     }else return "Deletion Insuccessful";
     }
 
-    public List<UserEntity> findAllUserEntity(){
-        return userRepository.findAll();
+    public List<UserReadDTO> findAllUserEntity(){
+        return userRepository.findAll().stream().map(
+                user -> UserReadDTO.builder()
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .category(user.getCategory())
+                        .wallet(user.getWallet())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public String verifyUser(AuthDTO authDTO){
@@ -127,7 +110,6 @@ public class UserService {
 
         if(authentication.isAuthenticated())
             return "Authenicated";
-
         return "Authentication Failed";
     }
 
@@ -144,4 +126,22 @@ public class UserService {
     }
 
 
+    public UserReadDTO updateUser(UserDTO user) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity currentUser = findUserEntityByUsername(username).get();
+
+        currentUser.setEmail(user.getEmail());
+        currentUser.setPassword(user.getPassword());
+        currentUser.setUsername(user.getUsername());
+
+        userRepository.save(currentUser);
+
+        return new UserReadDTO().builder()
+                .username(currentUser.getUsername())
+                .email(currentUser.getEmail())
+                .wallet(currentUser.getWallet())
+                .category(currentUser.getCategory())
+                .build();
+    }
 }

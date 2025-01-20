@@ -16,7 +16,7 @@ import java.time.Period;
 public class SavingGoal_ReturnDTO {
 
     private String username;
-
+    private Integer savinggoalid;
     private Double targetamount;
     private LocalDate targetdate;
     private Boolean iscompleted;

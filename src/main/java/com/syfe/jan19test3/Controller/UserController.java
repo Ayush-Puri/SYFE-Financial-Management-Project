@@ -22,16 +22,16 @@ public class UserController {
 
     @GetMapping("/Allusers")
     public List<UserReadDTO> findAllUsers(){
-        return userService.findAllUserDTO();
+        return userService.findAll();
     }
 
     @GetMapping("/user")
     public UserReadDTO findUser() throws Exception {
-        return userService.findUserDTO();
+        return userService.findUser();
     }
 
     @GetMapping("/allusers")
-    public List<UserEntity> findAllUserEntity(){
+    public List<UserReadDTO> findAllUserEntity(){
         return userService.findAllUserEntity();
     }
 
@@ -50,6 +50,11 @@ public class UserController {
         UserEntity currentUser = userService.findUserEntityByUsername(username).get();
 
         return currentUser.getCategory();
+    }
+
+    @PutMapping("/user")
+    public UserReadDTO updateUser(@RequestBody UserDTO user) throws Exception {
+        return userService.updateUser(user);
     }
 
 }

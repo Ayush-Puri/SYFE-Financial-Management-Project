@@ -36,4 +36,9 @@ public class TransactionController {
         return transactionService.findAllTransactionsByUser();
     }
 
+    @PutMapping("/commit/{transactionId}")
+    public TransactionReturnDTO updateTreansaction(@RequestBody TransactionDTO transactionDTO, @PathVariable Integer transactionId) throws Exception {
+        return transactionService.updateTransaction(transactionDTO, transactionId);
+    }
+
 }

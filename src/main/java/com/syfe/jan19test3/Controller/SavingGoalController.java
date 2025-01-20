@@ -1,5 +1,6 @@
 package com.syfe.jan19test3.Controller;
 
+import com.syfe.jan19test3.DTO.SavingGoalDTO;
 import com.syfe.jan19test3.DTO.SavingGoal_ReturnDTO;
 import com.syfe.jan19test3.Entity.SavingGoal;
 import com.syfe.jan19test3.Entity.UserEntity;
@@ -8,9 +9,7 @@ import com.syfe.jan19test3.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -26,12 +25,24 @@ public class SavingGoalController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/view")
+    @GetMapping()
     public List<SavingGoal_ReturnDTO> findAll() throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserEntity currentUser = userService.findUserEntityByUsername(username).get();
-
         return savingGoalService.findAll();
     }
+
+    @PostMapping()
+    public SavingGoal_ReturnDTO saveSavingGoal(@RequestBody SavingGoalDTO goal) throws Exception {
+        return savingGoalService.saveNewGoal(goal);
+    }
+
+    @PutMapping("/{goalId}")
+    public SavingGoal_ReturnDTO updateSavingGoal(@RequestBody SavingGoalDTO goal, @PathVariable Integer goalId) throws Exception {
+        return savingGoalService.updateGoal(goal, goalId);
+    }
+
+    @DeleteMapping("/{goalId}")
+    public String deleteGoal(@PathVariable Integer goalId) throws Exception {
+        return savingGoalService.removeGoal(goalId);
+    }
+
 }

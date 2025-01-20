@@ -8,4 +8,6 @@ import java.util.*;
 @Repository
 public interface SavingGoalRepository extends JpaRepository<SavingGoal, Integer> {
     List<SavingGoal> findAllByUsername(String username);
+
+    Optional<SavingGoal> findBySavinggoalid(Integer goalId);
 }
