@@ -10,28 +10,28 @@ The **Personal Finance Manager** is a powerful tool designed to help users track
 
 ## 🎯 Features  
 
-### ✅ User Management  
+###  User Management  
 - 🔐 **Register/Login**: Users can securely register and log in.  
 - 🔒 **Session Management**: Enjoy seamless authentication throughout a session.  
 - 🚪 **Public Endpoints**: APIs for registration and login are available for new users.  
 
-### ✅ Transaction Management  
+###  Transaction Management  
 - 📝 **CRUD Operations**: Add, view, update, and delete financial transactions.  
 - 🏷️ **Categorization**: Organize transactions by categories (e.g., Food, Rent).  
 - 🛡️ **User-Specific Data**: Transactions are private and secured for individual accounts.  
 
-### ✅ Category Management  
+###  Category Management  
 - 🛠️ **Custom Categories**: Create and manage personalized categories.  
 
-### ✅ Savings Goals  
+###  Savings Goals  
 - 🎯 **Set Goals**: Define goals with target amounts and dates.  
 - 📈 **Progress Tracking**: Visualize progress automatically via transactions.  
 
-### ✅ Reports  
+###  Reports  
 - 📊 **Insights**: Generate monthly/yearly reports on income, expenses, and savings.  
 - 🖼️ **Visualization**: Includes charts like pie charts and bar graphs for better insights.  
 
-### ✅ Data Persistence  
+###  Data Persistence  
 - 💾 **Database**: Supports **PostgreSQL** (default) and **H2 In-Memory Database** (for testing).  
 
 ## Table Structure with Relations
