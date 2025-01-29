@@ -50,7 +50,7 @@ The **Personal Finance Manager** is a powerful tool designed to help users track
 │   │       └── main
 │   │           └── com
 │   │               └── syfe
-│   │                   └── jan19test3
+│   │                   └── SYFE-Financial-Management-Project
 │   │                       ├── Application.class
 │   │                       ├── Controller
 │   │                       │   ├── AdminController.class
@@ -131,7 +131,7 @@ The **Personal Finance Manager** is a powerful tool designed to help users track
     │   ├── java
     │   │   └── com
     │   │       └── syfe
-    │   │           └── jan19test3
+    │   │           └── SYFE-Financial-Management-Project
     │   │               ├── Application.java
     │   │               ├── Controller
     │   │               │   ├── AdminController.java
@@ -173,7 +173,7 @@ The **Personal Finance Manager** is a powerful tool designed to help users track
         └── java
             └── com
                 └── syfe
-                    └── jan19test3
+                    └── SYFE-Financial-Management-Project
                         └── ApplicationTests.java
 ```
 
