@@ -7,12 +7,14 @@ import com.syfe.FinancialManagementProject.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
 
-@RestController
+@Controller
 @RequestMapping("/api")
 public class UserController {
 
@@ -20,17 +22,21 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/Allusers")
-    public List<UserReadDTO> findAllUsers(){
-        return userService.findAll();
+    public String findAllUsers(Model model){
+
+        List<UserReadDTO> list = userService.findAll();
+        model.addAttribute("UserReadDTO", list);
+
+        return "User_Pages/all-users";
     }
 
     @GetMapping("/user")
-    public UserReadDTO findUser() throws Exception {
+    public UserReadDTO findUser(Model model) throws Exception {
         return userService.findUser();
     }
 
     @GetMapping("/allusers")
-    public List<UserReadDTO> findAllUserEntity(){
+    public List<UserReadDTO> findAllUserEntity(Model model){
         return userService.findAllUserEntity();
     }
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Savings Goal</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+<body class="bg-light">
+<div class="bg-primary text-white text-center py-4">
+    <h1>Edit Savings Goal</h1>
+</div>
+<div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 500px;">
+        <div class="card-body">
+            <form th:action="@{/savings-goals/update/{id}(id=${goal.savinggoalid})}" method="post">
+                <div class="mb-3">
+                    <label for="targetamount" class="form-label">Target Amount:</label>
+                    <input type="number" id="targetamount" name="targetamount" th:value="${goal.targetamount}" class="form-control" step="0.01" required>
+                </div>
+                <div class="mb-3">
+                    <label for="targetdate" class="form-label">Target Date:</label>
+                    <input type="date" id="targetdate" name="targetdate" th:value="${goal.targetdate}" class="form-control" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Update Savings Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
