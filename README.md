@@ -1,94 +1,92 @@
-
 # SYFE Financial Management Project
 
 ## Overview
-SYFE Financial Management Project is a RESTful API that provides endpoints for managing savings goals, user accounts, transactions, and reports. The system ensures security and data isolation by requiring authentication for all non-public endpoints.
 
-## Table of Contents
-- [Features](#features)
-- [Authentication](#authentication)
-- [API Endpoints](#api-endpoints)
-  - [Public Endpoints](#public-endpoints)
-  - [User Endpoints](#user-endpoints)
-  - [Transaction Endpoints](#transaction-endpoints)
-  - [Admin Endpoints](#admin-endpoints)
-  - [Report Endpoints](#report-endpoints)
-- [Setup and Running the Project](#setup-and-running-the-project)
-- [Security Considerations](#security-considerations)
+SYFE Financial Management is a RESTful API service for managing saving goals, transactions, and reports. It allows users to register, manage their finances, and generate financial reports. Authentication is required for non-public endpoints.
 
-## Features
-- User authentication and authorization
-- Savings goal management
-- Transaction management
-- Report generation
-- Secure data isolation per user
-
-## Authentication
-All non-public endpoints require authentication using **Basic Authentication** with the format:
-```
-Authorization: Basic <username> <password>
-```
-- This ensures that users can only access and modify their own data.
-- Transactions and saving goals are linked to the authenticated user, preventing unauthorized changes by other users.
-
-  
+---
+ 
 ## Table Structure with Relations
 ---<img width="854" alt="Screenshot 2025-01-20 at 10 16 23 AM" src="https://github.com/user-attachments/assets/d136fbd3-8393-47a9-b959-b36158ab3a49" />
 
 
+## Authentication
+
+All **non-public** API endpoints require authentication using Basic Auth:
+
+```
+Authorization: Basic <username> <password>
+```
+
+- `<username>` and `<password>` are credentials of an already registered user.
+- This ensures that transactions and saving goals are **user-specific** and prevents unauthorized modifications.
+
+---
+
 ## API Endpoints
-### Public Endpoints
-These endpoints do not require authentication.
 
-#### Signup a new user
-```http
-POST http://localhost:8080/public/signup
-Content-Type: application/json
+### **Public Endpoints (No Authentication Required)**
 
+| Method | Endpoint         | Description       |
+| ------ | ---------------- | ----------------- |
+| `POST` | `/public/signup` | User registration |
+| `POST` | `/public/verify` | Verify user       |
+
+#### **JSON Request Body for `/public/signup` (POST)**
+
+```json
 {
   "username": "",
   "email": "",
   "password": ""
 }
 ```
-#### Verify user
-```http
-POST http://localhost:8080/public/verify
+
+### **User Endpoints (Requires Authentication)**
+
+| Method   | Endpoint            | Description              |
+| -------- | ------------------- | ------------------------ |
+| `GET`    | `/api/allusers`     | Get all users            |
+| `GET`    | `/api/MyCategories` | Get user categories      |
+| `GET`    | `/api/user`         | Get current user details |
+| `PUT`    | `/api/user`         | Update user details      |
+| `DELETE` | `/api/user`         | Delete current user      |
+
+### **Admin Endpoints (Requires Authentication)**
+
+| Method   | Endpoint               | Description          |
+| -------- | ---------------------- | -------------------- |
+| `DELETE` | `/admin/user/{userId}` | Delete user by Admin |
+
+### **Saving Goals Endpoints (Requires Authentication)**
+
+| Method   | Endpoint               | Description              |
+| -------- | ---------------------- | ------------------------ |
+| `GET`    | `/savingGoal`          | Get all saving goals     |
+| `POST`   | `/savingGoal`          | Create a new saving goal |
+| `PUT`    | `/savingGoal/{goalId}` | Update saving goal       |
+| `DELETE` | `/savingGoal/{goalId}` | Delete saving goal       |
+
+#### **JSON Request Body for `/savingGoal` (POST)**
+
+```json
+{
+  "targetamount": 3001.0,
+  "targetdate": "16-02-2025"
+}
 ```
 
-### User Endpoints
-Require authentication.
+### **Transaction Endpoints (Requires Authentication)**
 
-#### Get all users
-```http
-GET http://localhost:8080/api/allusers
-Authorization: Basic <username> <password>
-```
-#### Get user details
-```http
-GET http://localhost:8080/api/user
-Authorization: Basic <username> <password>
-```
-#### Update user details
-```http
-PUT http://localhost:8080/api/user
-Authorization: Basic <username> <password>
-```
-#### Delete user
-```http
-DELETE http://localhost:8080/api/user
-Authorization: Basic <username> <password>
-```
+| Method | Endpoint                              | Description          |
+| ------ | ------------------------------------- | -------------------- |
+| `POST` | `/transaction/commit`                 | Commit a transaction |
+| `PUT`  | `/transaction/commit/{transactionId}` | Update transaction   |
+| `GET`  | `/transaction/viewAll`                | Get all transactions |
 
-### Transaction Endpoints
-Require authentication.
+#### **JSON Request Body for `/transaction/commit` (POST)**
 
-#### Commit a transaction
-```http
-POST http://localhost:8080/transaction/commit
-Content-Type: application/json
-Authorization: Basic <username> <password>
-
+```json
 {
   "amount": 0,
   "type": "Income",
@@ -96,59 +94,45 @@ Authorization: Basic <username> <password>
   "description": ""
 }
 ```
-#### Update a transaction
-```http
-PUT http://localhost:8080/transaction/commit/{transactionId}
-Authorization: Basic <username> <password>
-```
-#### View all transactions
-```http
-GET http://localhost:8080/transaction/viewAll
-Authorization: Basic <username> <password>
-```
 
-### Admin Endpoints
-Require authentication with admin privileges.
+### **Report Endpoints (Requires Authentication)**
 
-#### Delete a user
-```http
-DELETE http://localhost:8080/admin/user/{userId}
-Authorization: Basic <admin_username> <admin_password>
-```
+| Method | Endpoint         | Description                    |
+| ------ | ---------------- | ------------------------------ |
+| `GET`  | `/report`        | Get all reports                |
+| `GET`  | `/report/{year}` | Get report for a specific year |
 
-### Report Endpoints
-Require authentication.
+#### **JSON Request Body for `/report` (POST)**
 
-#### View report
-```http
-GET http://localhost:8080/report
-Authorization: Basic <username> <password>
+```json
+{
+  "fromDate": "01-01-2025",
+  "uptoDate": "31-12-2025"
+}
 ```
-#### View report for a specific year
-```http
-GET http://localhost:8080/report/{year}
-Authorization: Basic <username> <password>
-```
-
-## Setup and Running the Project
-1. Clone the repository:
-```sh
-git clone https://github.com/Ayush-Puri/SYFE-Financial-Management-Project.git
-cd SYFE-Financial-Management-Project
-```
-2. Build the project using Gradle:
-```sh
-gradle build
-```
-3. Run the application:
-```sh
-java -jar build/libs/SYFE-Financial-Management-Project.jar
-```
-
-## Security Considerations
-- **Authentication is mandatory for all non-public endpoints**. Without it, users will encounter authentication errors.
-- **Data Isolation:** Each user's transactions and savings goals are tied to their account, preventing unauthorized modifications.
-- **Admin Privileges:** Only admins can perform certain actions like deleting users.
 
 ---
+
+## **Important Notes**
+
+1. **Authentication is required for all endpoints except `/public/signup` and `/public/verify`.**
+2. Ensure all API requests to secured endpoints include the `Authorization: Basic username password` header.
+3. **Date format** for all API requests should be **`dd-MM-yyyy`**.
+4. Users can only access and modify their own financial data, ensuring security and isolation.
+
+---
+
+### **Getting Started**
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Ayush-Puri/SYFE-Financial-Management-Project.git
+   ```
+2. Install dependencies and run the project.
+
+This README provides a structured and quick reference for using the SYFE Financial Management API effectively.
+
+
+
+ 
 
