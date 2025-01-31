@@ -3,6 +3,7 @@ package com.syfe.FinancialManagementProject.Controller;
 import com.syfe.FinancialManagementProject.DTO.AuthDTO;
 import com.syfe.FinancialManagementProject.DTO.UserDTO;
 import com.syfe.FinancialManagementProject.Service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +21,7 @@ public class PublicController {
 
 
     @PostMapping("/signup")
-    public UserDTO saveUser(@RequestBody UserDTO userDto){
+    public UserDTO saveUser(@Valid @RequestBody UserDTO userDto){
         userService.saveUserDTO(userDto);
         return userDto;
     }

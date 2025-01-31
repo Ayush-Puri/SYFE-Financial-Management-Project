@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 public class SavingGoalService {
     @Autowired
     private SavingGoalRepository savingGoalRepository;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     @Autowired
     private UserService userService;
@@ -54,20 +57,20 @@ public class SavingGoalService {
         savingGoalRepository.save(SavingGoal.builder()
                         .user(currentUser)
                         .targetamount(goal.getTargetamount())
-                        .targetdate(goal.getTargetdate())
+                        .targetdate(LocalDate.parse(goal.getTargetdate(), formatter))
                         .amountdifference(goal.getTargetamount()-currentUser.getWallet())
                         .iscompleted(goal.getTargetamount()-currentUser.getWallet() < 0)
                         .username(currentUser.getUsername())
-                        .daysremaining(Period.between(LocalDate.now(), goal.getTargetdate()))
+                        .daysremaining(Period.between(LocalDate.now(),LocalDate.parse(goal.getTargetdate(), formatter)))
                         .creationdate(LocalDate.now())
                 .build());
 
         return SavingGoal_ReturnDTO.builder()
                 .savinggoalid(0)
                 .amountdifference(goal.getTargetamount()-currentUser.getWallet())
-                .targetdate(goal.getTargetdate())
+                .targetdate(LocalDate.parse(goal.getTargetdate(), formatter))
                 .creationdate(LocalDate.now())
-                .daysremaining(Period.between(LocalDate.now(), goal.getTargetdate()))
+                .daysremaining(Period.between(LocalDate.now(), LocalDate.parse(goal.getTargetdate(), formatter)))
                 .iscompleted(goal.getTargetamount()-currentUser.getWallet() < 0)
                 .username(currentUser.getUsername())
                 .targetamount(goal.getTargetamount())
@@ -86,15 +89,15 @@ public class SavingGoalService {
             throw new Exception("Saving Goal is not Your to Edit!");
         }
         savedgoal.get().setTargetamount(goal.getTargetamount());
-        savedgoal.get().setTargetdate(goal.getTargetdate());
+        savedgoal.get().setTargetdate(LocalDate.parse(goal.getTargetdate(), formatter));
         savingGoalRepository.save(savedgoal.get());
 
         return SavingGoal_ReturnDTO.builder()
                 .savinggoalid(savedgoal.get().getSavinggoalid())
                 .amountdifference(goal.getTargetamount()-currentUser.getWallet())
-                .targetdate(goal.getTargetdate())
+                .targetdate(LocalDate.parse(goal.getTargetdate(), formatter))
                 .creationdate(savedgoal.get().getCreationdate())
-                .daysremaining(Period.between(LocalDate.now(), goal.getTargetdate()))
+                .daysremaining(Period.between(LocalDate.now(), LocalDate.parse(goal.getTargetdate(), formatter)))
                 .iscompleted(goal.getTargetamount()-currentUser.getWallet() < 0)
                 .username(currentUser.getUsername())
                 .targetamount(goal.getTargetamount())

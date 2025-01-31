@@ -1,5 +1,7 @@
 package com.syfe.FinancialManagementProject.DTO;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +14,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class SavingGoalDTO {
+
+    @Min(value = 0, message = "Can Not set negative Saving Goal")
     private Double targetamount;
-    private LocalDate targetdate;
+
+    private String targetdate;
 }
+

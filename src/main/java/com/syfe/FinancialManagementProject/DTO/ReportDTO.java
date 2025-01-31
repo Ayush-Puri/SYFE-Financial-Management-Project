@@ -1,22 +1,17 @@
 package com.syfe.FinancialManagementProject.DTO;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+import java.time.LocalDate;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
-
-    private String username;
-
-    @Email
-    private String email;
-    private String password;
-
+@Data
+public class ReportDTO {
+    private LocalDate fromDate;
+    private LocalDate uptoDate;
 }
