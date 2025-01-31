@@ -130,6 +130,13 @@ Authorization: Basic <username> <password>
    ```
 2. Install dependencies and run the project.
 
+Report Data & Visualization
+All key financial metrics—Income, Expenses, Savings, and Category-wise Spendings—have been calculated within the report. These values can be used with a graphics generator to create pie charts, bar charts, and other visual representations for better financial analysis.
+API Testing Demonstration
+For a complete walkthrough of API functionality, including testing all endpoints using Postman, refer to the following video:
+[]
+
+
 This README provides a structured and quick reference for using the SYFE Financial Management API effectively.
 
 
