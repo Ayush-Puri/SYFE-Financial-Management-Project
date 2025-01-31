@@ -21,7 +21,7 @@ public class TransactionReturnDTO {
 
         private TransactionType type;
 
-        private LocalDateTime created_date;
+        private LocalDateTime dateTime;
 
         private String category;
 

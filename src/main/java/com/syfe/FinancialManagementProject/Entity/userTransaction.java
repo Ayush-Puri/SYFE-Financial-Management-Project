@@ -31,7 +31,7 @@ public class userTransaction {
     @Enumerated(value = EnumType.STRING)
     private TransactionType type;
 
-    private LocalDateTime date = LocalDateTime.now();
+    private LocalDateTime dateTime = LocalDateTime.now();
 
     private String category;
 

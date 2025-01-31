@@ -41,7 +41,7 @@ public class TransactionService {
                 .amount(transactionDTO.getAmount())
                 .category(transactionDTO.getCategory())
                 .type(transactionDTO.getType())
-                .date(LocalDateTime.now())
+                .dateTime(LocalDateTime.now())
                 .description(transactionDTO.getDescription())
                 .build();
 
@@ -71,7 +71,7 @@ public class TransactionService {
         return transactionRepository.findAllByUsername(username).stream()
                 .map(transaction -> new TransactionReturnDTO().builder()
                         .amount(transaction.getAmount())
-                        .created_date(transaction.getDate())
+                        .dateTime(transaction.getDateTime())
                         .transactionid(transaction.getTransactionid())
                         .type(transaction.getType())
                         .username(transaction.getUsername())
@@ -115,7 +115,7 @@ public class TransactionService {
                 .category(transactionDTO.getCategory())
                 .username(currentUser.getUsername())
                 .description(transactionDTO.getDescription())
-                .created_date(transaction.get().getDate())
+                .dateTime(transaction.get().getDateTime())
                 .build();
     }
 
