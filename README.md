@@ -1,8 +1,8 @@
-# SYFE Financial Management Project
+# Financial Management System
 
 ## Overview
 
-SYFE Financial Management is a RESTful API service for managing saving goals, transactions, and reports. It allows users to register, manage their finances, and generate financial reports. Authentication is required for non-public endpoints.
+This Financial Management System is a RESTful API service for managing saving goals, transactions, and reports. It allows users to register, manage their finances, and generate financial reports. Authentication is required for non-public endpoints.
 
 ---
  
@@ -39,10 +39,10 @@ Authorization: Basic <username> <password>
   "username": "",
   "email": "",
   "password": ""
-}
 ```
 
 ### **User Endpoints (Requires Authentication)**
+}
 
 | Method   | Endpoint            | Description              |
 | -------- | ------------------- | ------------------------ |
