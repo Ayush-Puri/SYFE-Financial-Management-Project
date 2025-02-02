@@ -3,6 +3,7 @@ package com.Financial_Management_System.Service;
 
 import com.Financial_Management_System.DTO.TransactionDTO;
 import com.Financial_Management_System.DTO.TransactionReturnDTO;
+import com.Financial_Management_System.DTO.TransactionType;
 import com.Financial_Management_System.Entity.UserEntity;
 import com.Financial_Management_System.Entity.userTransaction;
 import com.Financial_Management_System.Repository.TransactionRepository;
@@ -39,7 +40,7 @@ public class TransactionService {
                 .user(user.get())
                 .username(username)
                 .amount(transactionDTO.getAmount())
-                .category(transactionDTO.getCategory())
+                .category(transactionDTO.getCategory().isBlank() ? "Uncategorized":transactionDTO.getCategory())
                 .type(transactionDTO.getType())
                 .dateTime(LocalDateTime.now())
                 .description(transactionDTO.getDescription())
@@ -48,8 +49,13 @@ public class TransactionService {
         // Save transaction
         transactionRepository.save(transaction);
 
+        int multiplier = 0;
+        if(transactionDTO.getType()== TransactionType.Expense){
+            multiplier = -1;
+        }else multiplier = 1;
+
         // Update user's wallet
-        double updatedWallet = (user.get().getWallet() == null ? 0.0 : user.get().getWallet()) + transactionDTO.getAmount();
+        double updatedWallet = user.get().getWallet()  + transactionDTO.getAmount()*multiplier;
         user.get().setWallet(updatedWallet);
 
         if(!user.get().getCategory().contains(transactionDTO.getCategory())){
@@ -69,7 +75,7 @@ public class TransactionService {
         String username = authentication.getName();
 
         return transactionRepository.findAllByUsername(username).stream()
-                .map(transaction -> new TransactionReturnDTO().builder()
+                .map(transaction -> TransactionReturnDTO.builder()
                         .amount(transaction.getAmount())
                         .dateTime(transaction.getDateTime())
                         .transactionid(transaction.getTransactionid())
@@ -108,7 +114,7 @@ public class TransactionService {
         userRepository.save(currentUser);
         transactionRepository.save(transaction.get());
 
-        return new TransactionReturnDTO().builder()
+        return TransactionReturnDTO.builder()
                 .transactionid(transaction.get().getTransactionid())
                 .amount(transactionDTO.getAmount())
                 .type(transactionDTO.getType())

@@ -75,12 +75,14 @@ public class UserService {
         category.add("food");
         category.add("rent");
         category.add("entertainment");
+        category.add("Uncategorized");
 
         UserEntity newUser = UserEntity.builder()
                 .username(user.getUsername())
                 .password(encoder.encode(user.getPassword()))
                 .email(user.getEmail())
                 .category(category)
+                .wallet(0.0)
                 .savinggoals(new HashSet<>())
                 .transactionList(new ArrayList<>())
                 .build();
@@ -133,6 +135,7 @@ public class UserService {
     public UserReadDTO updateUser(UserDTO user) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+
         UserEntity currentUser = findUserEntityByUsername(username).get();
 
         currentUser.setEmail(user.getEmail());
@@ -141,7 +144,7 @@ public class UserService {
 
         userRepository.save(currentUser);
 
-        return new UserReadDTO().builder()
+        return UserReadDTO.builder()
                 .username(currentUser.getUsername())
                 .email(currentUser.getEmail())
                 .wallet(currentUser.getWallet())

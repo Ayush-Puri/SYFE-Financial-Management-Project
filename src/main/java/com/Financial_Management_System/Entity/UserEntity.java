@@ -1,6 +1,7 @@
 package com.Financial_Management_System.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,9 +24,11 @@ public class UserEntity {
     private String username;
 
     @Column(nullable = false)
+    @NotBlank
     private String password;
 
     @Column(unique = true, nullable = false)
+    @NotBlank
     private String email;
 
     private Double wallet;
@@ -38,6 +41,5 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<userTransaction> transactionList;
-
 
 }
