@@ -39,6 +39,7 @@ Authorization: Basic <username> <password>
   "username": "",
   "email": "",
   "password": ""
+}
 ```
 
 ### **User Endpoints (Requires Authentication)**
