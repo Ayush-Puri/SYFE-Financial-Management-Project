@@ -24,12 +24,13 @@ public class UserEntity {
     private String username;
 
     @Column(nullable = false)
-    @NotBlank
     private String password;
 
     @Column(unique = true, nullable = false)
-    @NotBlank
     private String email;
+
+    @Column(unique = true, nullable = false)
+    private String phone;
 
     private Double wallet;
 

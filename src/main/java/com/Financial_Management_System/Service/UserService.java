@@ -66,11 +66,6 @@ public class UserService {
 
     public ResponseEntity<String> saveUserDTO(UserDTO user){
 
-        if(user.getEmail().isBlank() || user.getUsername().isBlank() || user.getPassword().isBlank()){
-            System.out.println("Something Wrong");
-            return ResponseEntity.badRequest().body("Invalid / Empty Input");
-        }
-
         Set<String> category = new HashSet<>();
         category.add("food");
         category.add("rent");
@@ -82,6 +77,7 @@ public class UserService {
                 .password(encoder.encode(user.getPassword()))
                 .email(user.getEmail())
                 .category(category)
+                .phone(user.getPhone())
                 .wallet(0.0)
                 .savinggoals(new HashSet<>())
                 .transactionList(new ArrayList<>())
